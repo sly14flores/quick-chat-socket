@@ -1,15 +1,23 @@
 'use strict';
 
-const express = require('express');
-const socketIO = require('socket.io');
+const express = require("express");
+const { createServer } = require("http");
+const { Server } = require("socket.io");
+const cors = require('cors');
 
-const PORT = process.env.PORT || 80;
+const app = express();
+app.use(cors({
+  origin: '*'
+}));
+const httpServer = createServer(app);
+const io = new Server(httpServer, {
+  cors: {
+    origin: "*",
+    methods: ["GET", "POST"]
+  }
+});
 
-const server = express()
-  .listen(PORT, () => console.log(`Listening on ${PORT}`));
-
-const io = socketIO(server);
-
+//
 io.on("connection", (socket) => {
   console.log(`${socket.id} is connected`)
   socket.on('message', (payload) => {
@@ -27,5 +35,10 @@ io.on("connection", (socket) => {
     socket.broadcast.emit('chatFocus', payload)
   })
 });
+//
 
-setInterval(() => io.emit('time', new Date().toTimeString()), 1000);
+const port = 80
+
+httpServer.listen(port, () => {
+  console.log(`Listening to port ${port}`)
+});
