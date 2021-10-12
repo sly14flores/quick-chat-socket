@@ -3,7 +3,7 @@ const { Server } = require("socket.io");
 const httpServer = createServer();
 const io = new Server(httpServer, {
   cors: {
-    origin: "*",
+    origin: "https://quick-chat-fe.herokuapp.com",
     methods: ["GET", "POST"]
   }
 });
