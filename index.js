@@ -1,36 +1,35 @@
 'use strict';
 
 const express = require('express');
-const socketIO = require('socket.io');
-// const cors = require('cors');
+const app = express();
+const http = require("http").createServer(app);
+const io = require('socket.io')(http, {
+  cors: {
+    origin: "*"
+  }
+});
 
 const PORT = process.env.PORT || 80;
-// const INDEX = '/index.html';
 
-const server = express()
-  // .use((req, res) => res.sendFile(INDEX, { root: __dirname }))
-  .listen(PORT, () => console.log(`Listening on ${PORT}`));
-
-const io = socketIO(server,  {
-  origins: ["*","https://quick-chat-fe.herokuapp.com"]
-});
-
-//
-io.on("connection", (socket) => {
-  console.log(`${socket.id} is connected`)
-  socket.on('message', (payload) => {
-    // console.log(payload)
-    socket.broadcast.emit('getConvo', payload)
-  })
-  socket.on('login', (payload) => {
-    console.log(`${payload.name} has login`)
-    socket.broadcast.emit('userLogin', payload)
-  })
-  socket.on('logout', (payload) => {
-    socket.broadcast.emit('userLogin', payload)
-  })
-  socket.on('chat', (payload) => {
-    socket.broadcast.emit('chatFocus', payload)
-  })
-});
-//
+http.listen(PORT, function() {
+  console.log("Socket IO started")
+  //
+  io.on("connection", (socket) => {
+    console.log(`${socket.id} is connected`)
+    socket.on('message', (payload) => {
+      // console.log(payload)
+      socket.broadcast.emit('getConvo', payload)
+    })
+    socket.on('login', (payload) => {
+      console.log(`${payload.name} has login`)
+      socket.broadcast.emit('userLogin', payload)
+    })
+    socket.on('logout', (payload) => {
+      socket.broadcast.emit('userLogin', payload)
+    })
+    socket.on('chat', (payload) => {
+      socket.broadcast.emit('chatFocus', payload)
+    })
+  });
+  //
+})
