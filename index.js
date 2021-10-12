@@ -1,11 +1,18 @@
-const { createServer } = require("http");
-const { Server } = require("socket.io");
-const httpServer = createServer();
-const io = new Server(httpServer, {
-  cors: {
-    origin: "*",
-    methods: ["GET", "POST"]
-  }
+'use strict';
+
+const express = require('express');
+const socketIO = require('socket.io');
+
+const PORT = process.env.PORT || 80;
+
+const server = express()
+  .listen(PORT, () => console.log(`Listening on ${PORT}`));
+
+const io = socketIO(server);
+
+io.on('connection', (socket) => {
+  console.log('Client connected');
+  socket.on('disconnect', () => console.log('Client disconnected'));
 });
 
 io.on("connection", (socket) => {
@@ -26,6 +33,4 @@ io.on("connection", (socket) => {
   })
 });
 
-httpServer.listen(80, () => {
-  console.log("Socket is live")
-});
+setInterval(() => io.emit('time', new Date().toTimeString()), 1000);
