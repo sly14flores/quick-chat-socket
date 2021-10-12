@@ -14,7 +14,9 @@ const server = express()
   }))
   .listen(PORT, () => console.log(`Listening on ${PORT}`));
 
-const io = socketIO(server);
+const io = socketIO(server,  {
+  origins: ["https://quick-chat-fe.herokuapp.com"]
+});
 
 //
 io.on("connection", (socket) => {
