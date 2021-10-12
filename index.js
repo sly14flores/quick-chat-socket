@@ -10,10 +10,9 @@ const PORT = process.env.PORT || 80;
 const server = express()
   // .use((req, res) => res.sendFile(INDEX, { root: __dirname }))
   .use(cors({
-    origin: '*'
+    origin: 'https://quick-chat-fe.herokuapp.com'
   }))
   .listen(PORT, () => console.log(`Listening on ${PORT}`));
-
 
 const io = socketIO(server);
 
