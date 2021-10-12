@@ -1,21 +1,16 @@
 'use strict';
 
-const express = require("express");
-const { createServer } = require("http");
-const { Server } = require("socket.io");
-const cors = require('cors');
+const express = require('express');
+const socketIO = require('socket.io');
 
-const app = express();
-app.use(cors({
-  origin: '*'
-}));
-const httpServer = createServer(app);
-const io = new Server(httpServer, {
-  // cors: {
-  //   origin: "*",
-  //   methods: ["GET", "POST"]
-  // }
-});
+const PORT = process.env.PORT || 80;
+// const INDEX = '/index.html';
+
+const server = express()
+  // .use((req, res) => res.sendFile(INDEX, { root: __dirname }))
+  .listen(PORT, () => console.log(`Listening on ${PORT}`));
+
+const io = socketIO(server);
 
 //
 io.on("connection", (socket) => {
@@ -37,8 +32,4 @@ io.on("connection", (socket) => {
 });
 //
 
-const port = 80
-
-httpServer.listen(port, () => {
-  console.log(`Listening to port ${port}`)
-});
+setInterval(() => io.emit('time', new Date().toTimeString()), 1000);
